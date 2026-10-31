@@ -8,7 +8,7 @@ I'm learning web development and building projects using React, PHP, Laravel, an
 
 ## 🌐 My Portfolio
 
-👉 👉 [Visit My Portfolio](https://htet-nandar-winn.github.io/my-portfolio/)
+👉  [Visit My Portfolio](https://htet-nandar-winn.github.io/my-portfolio/)
 
 ## 🛠️ Technologies I'm Learning
 
