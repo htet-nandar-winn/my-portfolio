@@ -187,10 +187,12 @@ export default function Projects() {
             Featured Projects
           </h2>
           <p className="mt-4 text-[1.0625rem] leading-relaxed text-muted lg:text-[1.125rem]">
-            Projects I&apos;m building while learning. Both are web
+            Projects I&apos;m building while learning. The list includes web
             applications built with PHP and Laravel and organised using
             Domain-Driven Design (DDD) — a way of structuring the code around
-            the project&apos;s business domain and its core concepts.
+            the project&apos;s business domain and its core concepts — as well
+            as modern Next.js and React applications such as a banking
+            platform.
           </p>
         </Reveal>
 

@@ -350,4 +350,28 @@ export const projects = [
     demo: "", // paste a live demo URL here, e.g. "https://bloodconnect.example.com"
     isExample: false,
   },
+  {
+    title: "Banking",
+    type: "Web application",
+    description:
+      "A modern banking platform for everyone, built with Next.js, React and TypeScript. It covers user authentication, bank account management, account overview, transaction history and money transfers.",
+    tech: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
+    architecture: "",
+    image: "",
+    repo: "https://github.com/htet-nandar-winn/Banking",
+    demo: "",
+    isExample: false,
+  },
+  {
+    title: "Vite-Project",
+    type: "Web application",
+    description:
+      "A modern web application built with React and Vite, with a fast development server, hot module replacement and an optimized production build setup.",
+    tech: ["React", "Vite", "JavaScript"],
+    architecture: "",
+    image: "",
+    repo: "https://github.com/htet-nandar-winn/Vite-Project",
+    demo: "",
+    isExample: false,
+  },
 ];
