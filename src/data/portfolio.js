@@ -366,8 +366,8 @@ export const projects = [
     title: "Vite-Project",
     type: "Web application",
     description:
-      "A modern web application built with React and Vite, with a fast development server, hot module replacement and an optimized production build setup.",
-    tech: ["React", "Vite", "JavaScript"],
+      "A modern web application built with Laravel, React and Vite, featuring a fast development server, hot module replacement and an optimized production build setup.",
+    tech: ["Laravel", "React", "Vite"],
     architecture: "",
     image: "",
     repo: "https://github.com/htet-nandar-winn/Vite-Project",
