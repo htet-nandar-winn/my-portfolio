@@ -374,4 +374,16 @@ export const projects = [
     demo: "",
     isExample: false,
   },
+  {
+    title: "Campus Food Ordering System",
+    type: "Web application",
+    description:
+      "A web-based food ordering and canteen management system for university students, built with PHP, MySQL and Domain-Driven Design (DDD) principles, covering food browsing, shopping carts, orders, payments and refunds.",
+    tech: ["PHP", "MySQL", "HTML5", "CSS3", "JavaScript"],
+    architecture: "Domain-Driven Design (DDD)",
+    image: "",
+    repo: "https://github.com/htet-nandar-winn/Campus-Food-Ordering-System",
+    demo: "",
+    isExample: false,
+  },
 ];
