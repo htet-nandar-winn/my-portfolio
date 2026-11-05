@@ -85,12 +85,20 @@ function EducationEntry({ entry, isLast, delay }) {
             </div>
 
             <ul className="mt-4 space-y-2.5 text-[1rem] text-muted">
-              <li className="flex items-center gap-2.5">
-                <BookOpenIcon
-                  className="size-4 shrink-0 text-purple-light"
-                  aria-hidden="true"
-                />
-                <span className="font-medium text-foreground">
+              <li className="flex items-start gap-3">
+                {entry.logo ? (
+                  <img
+                    src={entry.logo}
+                    alt={`${entry.institution} logo`}
+                    className="size-9 rounded-xl border border-border object-cover bg-surface-2 shrink-0"
+                  />
+                ) : (
+                  <BookOpenIcon
+                    className="size-4 shrink-0 text-purple-light"
+                    aria-hidden="true"
+                  />
+                )}
+                <span className="font-medium text-foreground leading-relaxed">
                   {entry.institution}
                 </span>
               </li>

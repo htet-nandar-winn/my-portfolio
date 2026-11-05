@@ -123,7 +123,9 @@ export default function Contact() {
                 Let&apos;s Connect Together
               </h2>
               <div className="mt-5">
-                <Badge tone="blue">{contact.availability}</Badge>
+                {contact.availability && (
+                  <Badge tone="blue">{contact.availability}</Badge>
+                )}
               </div>
             </Reveal>
 

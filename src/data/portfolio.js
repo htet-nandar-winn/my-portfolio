@@ -69,7 +69,7 @@ export const profile = {
       path that starts with "/", e.g. avatar: "/images/profile.jpg".
       If the file can't be loaded, the built-in initials placeholder is shown
       automatically, so there is never a broken image. */
-  avatar: `${import.meta.env.BASE_URL}images/kk.jpg`,
+  avatar: `${import.meta.env.BASE_URL}images/`,
 
   /** Your CV / résumé. Put the file in the /public folder and use a path that
       starts with "/", e.g. cv: "/cv.pdf".
@@ -84,7 +84,7 @@ export const profile = {
   phone: "+959 752491443",
 
   /** Full GitHub profile URL. */
-  github: "https://github.com/kklovesdaisy",
+  github: "https://github.com/htet-nandar-winn",
 
   /** Full LinkedIn profile URL.
       Not provided yet — leave "" and every LinkedIn link disappears
@@ -133,7 +133,7 @@ export const hero = {
   /** The typing loop: each phrase is typed letter by letter, held, deleted,
       then the next one starts — forever. Add or remove at will; the first
       entry should stay equal to `role`, since it is where the loop begins. */
-  typed: ["Full Stack Developer", "Web Developer"],
+  typed: ["Full Stack Developer"],
 };
 
 /* ============================================================================
@@ -184,8 +184,7 @@ export const skills = {
     "The technologies I am learning and using in my studies and personal projects. This is a learning record rather than a rating — I am always growing in each of these.",
 
   /** Shown under the grid. */
-  footnote:
-    "Listed as learning and hands-on use — no skill percentages, no expert claims.",
+  footnote: "",
 
   /* `icon` matches a slug in src/components/TechIcons.jsx. */
   items: [
@@ -226,8 +225,9 @@ export const education = {
       /* Optional campus photo shown across the top of the Education card. Drop
          a real photo at public/images/university.jpg and it appears
          automatically; if the file is missing, a neutral banner is used. */
-      image: "/images/university.jpg",
+      image: "/images/ucsmtlaMeiktila.jpg",
       imageAlt: "University of Computer Studies, Meiktila campus",
+      logo: "/images/ucsmtlaLogo.png",
       coursework: [],
       certifications: [],
     },
@@ -298,7 +298,7 @@ export const experience = {
    There is no contact form and no backend on this site.
    ============================================================================ */
 export const contact = {
-  availability: "Open to Junior Web Developer roles",
+  availability: "",
 
   /* EmailJS — powers the contact form in src/components/Contact.jsx.
      Create an Email service + template in your EmailJS dashboard, then paste

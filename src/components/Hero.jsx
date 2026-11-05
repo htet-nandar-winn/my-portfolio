@@ -30,7 +30,7 @@ const INTRO_LINES = [
 
 const TONE = {
   eyebrow: "text-2xl font-semibold tracking-tight text-foreground sm:text-[1.75rem]",
-  name: "mt-3 text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl xl:text-[4.75rem]",
+  name: "mt-3 text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl xl:text-[4rem]",
   role: "relative text-[1.625rem] font-bold tracking-tight text-muted sm:text-4xl lg:text-[2.75rem] xl:text-[2.875rem]",
 };
 
