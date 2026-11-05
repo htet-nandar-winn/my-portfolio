@@ -65,18 +65,40 @@ export default function Contact() {
 
     if (!validate()) return;
 
-    if (!isConfigured) {
-      setStatus("error");
-      return;
-    }
-
     // Auto-generate subject with sender name
     setForm((prev) => ({ ...prev, subject: `Portfolio contact from ${prev.from_name}` }));
 
     setStatus("sending");
 
-    try {
-      await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, event.target, PUBLIC_KEY);
+    /* When EmailJS is configured, send via EmailJS. Otherwise fall back to
+       opening the user's default email app (mailto:) so the form always works. */
+    if (isConfigured) {
+      try {
+        await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, event.target, PUBLIC_KEY);
+        setStatus("sent");
+        setForm({
+          from_name: "",
+          from_email: "",
+          phone: "",
+          subject: `Portfolio contact`,
+          message: "",
+        });
+        setErrors({});
+      } catch (error) {
+        console.error("EmailJS send failed:", error);
+        setStatus("error");
+      }
+    } else {
+      const body =
+        `Name: ${form.from_name}\n` +
+        `Email: ${form.from_email}\n` +
+        `Phone: ${form.phone || "—"}\n\n` +
+        `Message:\n${form.message}`;
+      const mailtoUrl =
+        `mailto:${profile.email}?` +
+        `subject=${encodeURIComponent(`Portfolio contact from ${form.from_name}`)}&` +
+        `body=${encodeURIComponent(body)}`;
+      window.location.href = mailtoUrl;
       setStatus("sent");
       setForm({
         from_name: "",
@@ -86,9 +108,6 @@ export default function Contact() {
         message: "",
       });
       setErrors({});
-    } catch (error) {
-      console.error("EmailJS send failed:", error);
-      setStatus("error");
     }
   };
 
@@ -247,21 +266,10 @@ export default function Contact() {
               <Button
                 type="submit"
                 size="sm"
-                disabled={status === "sending" || !isConfigured}
+                disabled={status === "sending"}
               >
                 {status === "sending" ? "Sending…" : "Submit"}
               </Button>
-
-              {!isConfigured && (
-                <div
-                  className="mt-4 rounded-xl border border-red-100 bg-red-50 p-3 text-[0.75rem] text-red-700 flex items-start gap-2"
-                >
-                  <span className="shrink-0 mt-0.5 text-red-500">⚠</span>
-                  Contact form not yet configured. Add your EmailJS credentials
-                  to <code className="text-red-600">.env</code> to enable
-                  sending.
-                </div>
-              )}
 
               {status === "sent" && (
                 <div
