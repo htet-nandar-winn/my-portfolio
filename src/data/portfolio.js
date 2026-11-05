@@ -104,7 +104,7 @@ export const navItems = [
   { label: "Skills", href: "#skills" },
   { label: "Education", href: "#education" },
   { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
+  { label: "Projects", href: "#made" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -299,6 +299,15 @@ export const experience = {
    ============================================================================ */
 export const contact = {
   availability: "Open to Junior Web Developer roles",
+
+  /* EmailJS — powers the contact form in src/components/Contact.jsx.
+     Create an Email service + template in your EmailJS dashboard, then paste
+     the IDs below. The public key is safe to expose (it is required by EmailJS). */
+  emailjs: {
+    serviceId: "", // e.g. "service_xxxxxxxxx"
+    templateId: "", // e.g. "template_xxxxxxxxx"
+    publicKey: "", // e.g. "public_xxxxxxxxx"
+  },
 };
 
 /* ============================================================================

@@ -143,7 +143,7 @@ export default function ProjectsCarousel() {
 
       <Container className="relative">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow justify-center">06 — Projects Made</p>
+          <p className="eyebrow justify-center">05 — Projects Made</p>
           <h2
             id="made-heading"
             className="section-heading mt-6"
@@ -169,7 +169,7 @@ export default function ProjectsCarousel() {
           >
             <div
               ref={trackRef}
-              className="relative h-[26rem] w-full"
+              className="relative h-[30rem] w-full"
               style={{ transformStyle: "preserve-3d" }}
             >
               {items.map((project, index) => {
@@ -211,7 +211,7 @@ export default function ProjectsCarousel() {
                       }
                     }}
                     className={[
-                      "absolute left-1/2 top-1/2 flex w-[19rem] max-w-[80vw] flex-col overflow-hidden rounded-2xl border bg-surface/95 shadow-card backdrop-blur transition-all duration-500 ease-out-expo",
+                      "absolute left-1/2 top-1/2 flex w-[24rem] max-w-[80vw] flex-col overflow-hidden rounded-2xl border bg-surface/95 shadow-card backdrop-blur transition-all duration-500 ease-out-expo",
                       isActive
                         ? "cursor-pointer border-purple/50 hover:shadow-glow-purple"
                         : "cursor-pointer border-border",
@@ -220,7 +220,7 @@ export default function ProjectsCarousel() {
                       .filter(Boolean)
                       .join(" ")}
                     style={{
-                      height: "24rem",
+                      height: "30rem",
                       transform: `translate(-50%, -50%) translateX(${offset * spacing}px) scale(${scale}) rotateY(${offset * -8}deg)`,
                       opacity: isActive ? 1 : distance === 1 ? 0.84 : 0,
                       zIndex: 20 - distance,

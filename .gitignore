@@ -12,6 +12,8 @@ dist
 dist-ssr
 dist-preview
 *.local
+.env
+.env.*
 
 # Editor directories and files
 .vscode/*

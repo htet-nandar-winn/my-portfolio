@@ -217,7 +217,7 @@ export default function Hero() {
 
             <Reveal delay={200}>
               <div className="mt-9 flex flex-wrap items-center gap-3">
-                <Button as="a" href="#projects" size="lg" className="group">
+                <Button as="a" href="#made" size="lg" className="group">
                   View My Projects
                   <ArrowRightIcon className="size-[1.15rem] transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
