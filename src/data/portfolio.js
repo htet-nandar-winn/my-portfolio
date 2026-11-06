@@ -69,7 +69,7 @@ export const profile = {
       path that starts with "/", e.g. avatar: "/images/profile.jpg".
       If the file can't be loaded, the built-in initials placeholder is shown
       automatically, so there is never a broken image. */
-  avatar: `${import.meta.env.BASE_URL}images/`,
+  avatar: `${import.meta.env.BASE_URL}images/profile.jpg`,
 
   /** Your CV / résumé. Put the file in the /public folder and use a path that
       starts with "/", e.g. cv: "/cv.pdf".
@@ -334,6 +334,7 @@ export const contact = {
    invented. The Code / Live Demo buttons stay hidden until you paste a real
    URL into `repo` or `demo`.
    ============================================================================ */
+
 export const projects = [
   {
     title: "MediaLibrary",
@@ -342,9 +343,9 @@ export const projects = [
       "A media library web application built with PHP and Laravel, using Domain-Driven Design (DDD) architecture to organize application logic into structured modules.",
     tech: ["PHP", "Laravel"],
     architecture: "Domain-Driven Design (DDD)",
-    image: "",
-    repo: "", // paste your GitHub URL here, e.g. "https://github.com/you/medialibrary"
-    demo: "", // paste a live demo URL here, e.g. "https://medialibrary.example.com"
+    image: "/images/mediaLibrary.png",
+    repo: "",
+    demo: "",
     isExample: false,
   },
   {
@@ -354,19 +355,19 @@ export const projects = [
       "A blood donation system web application built with PHP and Laravel, using Domain-Driven Design (DDD) architecture to organize application logic into structured modules.",
     tech: ["PHP", "Laravel"],
     architecture: "Domain-Driven Design (DDD)",
-    image: "",
-    repo: "", // paste your GitHub URL here, e.g. "https://github.com/you/bloodconnect"
-    demo: "", // paste a live demo URL here, e.g. "https://bloodconnect.example.com"
+    image: "/images/bloodconnect.png",
+    repo: "https://github.com/htet-nandar-winn/BloodConnect",
+    demo: "",
     isExample: false,
   },
   {
     title: "Banking",
     type: "Web application",
     description:
-      "A modern banking platform for everyone, built with Next.js, React and TypeScript. It covers user authentication, bank account management, account overview, transaction history and money transfers.",
+      "A modern banking platform built with Next.js, React and TypeScript. It covers user authentication, bank account management, account overview, transaction history and money transfers.",
     tech: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
     architecture: "",
-    image: "",
+    image: "/images/bank.png",
     repo: "https://github.com/htet-nandar-winn/Banking",
     demo: "",
     isExample: false,
@@ -375,8 +376,8 @@ export const projects = [
     title: "Vite-Project",
     type: "Web application",
     description:
-      "A modern web application built with React and Vite, with a fast development server, hot module replacement and an optimized production build setup.",
-    tech: ["React", "Vite", "JavaScript"],
+      "A Laravel-based web application using Vite for frontend asset development and management.",
+    tech: ["PHP", "Laravel", "Vite", "JavaScript"],
     architecture: "",
     image: "",
     repo: "https://github.com/htet-nandar-winn/Vite-Project",
@@ -390,8 +391,20 @@ export const projects = [
       "A web-based food ordering and canteen management system for university students, built with PHP, MySQL and Domain-Driven Design (DDD) principles, covering food browsing, shopping carts, orders, payments and refunds.",
     tech: ["PHP", "MySQL", "HTML5", "CSS3", "JavaScript"],
     architecture: "Domain-Driven Design (DDD)",
-    image: "",
+    image: "/images/food.png",
     repo: "https://github.com/htet-nandar-winn/Campus-Food-Ordering-System",
+    demo: "",
+    isExample: false,
+  },
+  {
+    title: "Movie Discovery",
+    type: "Web application",
+    description:
+      "A movie discovery application that allows users to explore movies and discover films through an interactive interface.",
+    tech: ["React", "JavaScript"],
+    architecture: "",
+    image: "/images/movieDiscovery.png",
+    repo: "",
     demo: "",
     isExample: false,
   },

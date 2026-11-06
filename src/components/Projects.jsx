@@ -1,19 +1,24 @@
-import { profile, projects } from "../data/portfolio";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import { projects } from "../data/portfolio";
 import { getTechColor } from "../data/techColors";
-import Badge from "./Badge";
-import Button from "./Button";
-import Card from "./Card";
+
 import Container from "./Container";
 import Reveal from "./Reveal";
 import Section from "./Section";
-import { ExternalLinkIcon, GithubIcon } from "./Icons";
 
-/* Only real URLs become links — anything else is shown as a
-   clearly-marked placeholder so there are no dead links. */
+import {
+  ArrowRightIcon,
+  CloseIcon,
+  ExternalLinkIcon,
+  GithubIcon,
+} from "./Icons";
+
+/* Check whether a URL is valid */
 const isHttpUrl = (url) =>
   typeof url === "string" && /^https?:\/\//i.test(url.trim());
 
-/* Two-letter mark used when a project has no screenshot yet. */
+/* Generate project initials */
 function getInitials(title) {
   return title
     .split(/\s+/)
@@ -24,203 +29,518 @@ function getInitials(title) {
     .toUpperCase();
 }
 
-function ScreenshotPlaceholder({ title }) {
+/* GitHub Pages-compatible image paths */
+function getImagePath(path) {
+  if (!path || typeof path !== "string") return "";
+
+  // External images
+  if (isHttpUrl(path)) return path;
+
+  const base = import.meta.env.BASE_URL || "/";
+  const normalizedBase = base.replace(/^\/+|\/+$/g, "");
+  let cleanPath = path.replace(/^\/+/, "");
+
+  // Remove public/ if included accidentally
+  cleanPath = cleanPath.replace(/^public\//, "");
+
+  // Avoid adding the base path twice
+  if (
+    normalizedBase &&
+    (cleanPath === normalizedBase || cleanPath.startsWith(`${normalizedBase}/`))
+  ) {
+    return `/${cleanPath}`;
+  }
+
+  // Add images/ if the folder is not included
+  if (!cleanPath.startsWith("images/")) {
+    cleanPath = `images/${cleanPath}`;
+  }
+
+  return `${base}${cleanPath}`;
+}
+
+/* Project Screenshot */
+function CardImage({ project }) {
+  const [imageError, setImageError] = useState(false);
+
+  const imagePath = getImagePath(project.image);
+
+  if (imagePath && !imageError) {
+    return (
+      <img
+        src={imagePath}
+        alt={`${project.title} screenshot`}
+        loading="lazy"
+        draggable="false"
+        className="size-full object-cover"
+        onError={() => setImageError(true)}
+      />
+    );
+  }
+
   return (
     <div className="relative grid size-full place-items-center bg-grid">
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-br from-purple/15 via-transparent to-blue/15"
+        className="absolute inset-0 bg-gradient-to-br from-purple/20 via-transparent to-blue/20"
       />
-      <div className="relative grid size-16 place-items-center rounded-2xl border border-border-strong bg-surface/70 backdrop-blur">
-        <span className="text-gradient text-xl font-extrabold">
-          {getInitials(title)}
-        </span>
-      </div>
+
+      <span className="text-gradient relative text-3xl font-extrabold">
+        {getInitials(project.title)}
+      </span>
+
       <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-        screenshot placeholder
+        Screenshot unavailable
       </span>
     </div>
   );
 }
 
-function ProjectCard({ project, index }) {
-  const hasRepo = isHttpUrl(project.repo);
-  const hasDemo = isHttpUrl(project.demo);
+/* Calculate carousel position */
+function ringOffset(index, current, total) {
+  let offset = index - current;
+
+  if (offset > total / 2) {
+    offset -= total;
+  }
+
+  if (offset < -total / 2) {
+    offset += total;
+  }
+
+  return offset;
+}
+
+/* Main Projects Carousel */
+export default function ProjectsCarousel() {
+  const items = useMemo(
+    () => projects.filter((project) => project && project.title),
+    [],
+  );
+
+  const [current, setCurrent] = useState(0);
+  const [active, setActive] = useState(null);
+
+  const [compact, setCompact] = useState(false);
+
+  const closeButtonRef = useRef(null);
+  const lastTriggerRef = useRef(null);
+
+  /* Responsive carousel */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const query = window.matchMedia("(max-width: 640px)");
+
+    const sync = () => setCompact(query.matches);
+
+    sync();
+
+    query.addEventListener("change", sync);
+
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  const total = items.length;
+
+  /* Previous and next navigation */
+  const move = useCallback(
+    (step) => {
+      if (total < 2) return;
+
+      setCurrent((value) => (value + step + total) % total);
+    },
+    [total],
+  );
+
+  /* Keyboard navigation */
+  const onKeyDown = (event) => {
+    if (active) return;
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      move(-1);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      move(1);
+    }
+  };
+
+  /* Modal keyboard and focus management */
+  useEffect(() => {
+    if (!active) return;
+
+    const onEscape = (event) => {
+      if (event.key === "Escape") {
+        setActive(null);
+      }
+    };
+
+    document.addEventListener("keydown", onEscape);
+
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    closeButtonRef.current?.focus();
+
+    return () => {
+      document.removeEventListener("keydown", onEscape);
+
+      document.body.style.overflow = previousOverflow;
+
+      lastTriggerRef.current?.focus?.();
+    };
+  }, [active]);
+
+  if (!total) return null;
+
+  /* Carousel sizing */
+  const spacing = compact ? 148 : 300;
+
+  const visibleRange = compact ? 1 : 2;
 
   return (
-    <Card hover className="group flex h-full flex-col">
-      {/* Screenshot */}
-      <div className="relative m-3 overflow-hidden rounded-xl border border-border bg-surface-2">
-        <div className="aspect-video">
-          {project.image ? (
-            <img
-              src={project.image}
-              alt={`${project.title} screenshot`}
-              loading="lazy"
-              className="size-full object-cover transition-transform duration-500 ease-out-expo group-hover:scale-105"
-            />
-          ) : (
-            <ScreenshotPlaceholder title={project.title} />
-          )}
-        </div>
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent"
-        />
-        {project.isExample ? (
-          <Badge tone="accent" className="absolute left-3 top-3">
-            Example
-          </Badge>
-        ) : null}
-      </div>
+    <Section
+      id="made"
+      aria-labelledby="made-heading"
+      className="border-t border-border"
+    >
+      {/* Background Decoration */}
+      <div
+        aria-hidden="true"
+        className="absolute left-1/2 top-1/3 size-80 -translate-x-1/2 rounded-full bg-blue/10 blur-[130px]"
+      />
 
-      {/* Details */}
-      <div className="flex flex-1 flex-col p-6 pt-3">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="text-[1.375rem] font-semibold">{project.title}</h3>
-          <span className="mt-0.5 font-mono text-[0.8125rem] text-subtle">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-        </div>
+      <Container className="relative">
+        {/* Section Heading */}
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <p className="eyebrow justify-center">05 — Projects Made</p>
 
-        {project.type ? (
-          <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-subtle">
-            {project.type}
+          <h2 id="made-heading" className="section-heading mt-6">
+            Projects <span className="text-gradient">Made</span>
+          </h2>
+
+          <p className="mt-4 text-[1.0625rem] leading-relaxed text-muted lg:text-[1.125rem]">
+            A closer look at the projects I have built. Use the arrows to browse
+            and select a card to see the full details.
           </p>
-        ) : null}
+        </Reveal>
 
-        <p className="mt-3 text-[1rem] leading-relaxed text-muted">
-          {project.description}
-        </p>
+        {/* Carousel */}
+        <Reveal delay={120}>
+          <div
+            className="relative mx-auto mt-14 w-full"
+            style={{ perspective: "120rem" }}
+            role="group"
+            aria-roledescription="carousel"
+            aria-label="Projects Made"
+            tabIndex={0}
+            onKeyDown={onKeyDown}
+          >
+            {/* Project Cards Container */}
+            <div
+              className="relative h-[30rem] w-full"
+              style={{ transformStyle: "preserve-3d" }}
+            >
+              {items.map((project, index) => {
+                const offset = ringOffset(index, current, total);
 
-        {/* Tech stack + architecture */}
-        <div className="mt-5 space-y-3">
-          {project.tech?.length ? (
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-                Tech stack
-              </span>
-              <ul className="flex flex-wrap gap-2">
-                {project.tech.map((tech) => (
+                const distance = Math.abs(offset);
+
+                const isActive = distance === 0;
+
+                const isVisible = distance <= visibleRange;
+
+                const scale = isActive
+                  ? 1
+                  : distance === 1
+                    ? compact
+                      ? 0.78
+                      : 0.86
+                    : 0.72;
+
+                return (
+                  <article
+                    key={project.title}
+                    tabIndex={isActive ? 0 : -1}
+                    aria-label={`${project.title} project`}
+                    aria-hidden={!isVisible}
+                    onClick={(event) => {
+                      if (!isVisible) return;
+
+                      if (isActive) {
+                        lastTriggerRef.current = event.currentTarget;
+                        setActive(project);
+                      } else {
+                        setCurrent(index);
+                      }
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key !== "Enter" && event.key !== " ") {
+                        return;
+                      }
+
+                      event.preventDefault();
+
+                      if (isActive) {
+                        lastTriggerRef.current = event.currentTarget;
+                        setActive(project);
+                      } else {
+                        setCurrent(index);
+                      }
+                    }}
+                    className={[
+                      "absolute left-1/2 top-1/2 flex w-[24rem] max-w-[80vw] flex-col overflow-hidden rounded-2xl border bg-surface/95 shadow-card backdrop-blur transition-all duration-500 ease-out-expo",
+                      isActive
+                        ? "cursor-pointer border-purple/50 hover:shadow-glow-purple"
+                        : "cursor-pointer border-border",
+                      isVisible ? "focus-visible:outline-none" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                    style={{
+                      height: "30rem",
+
+                      transform: `translate(-50%, -50%) translateX(${offset * spacing}px) scale(${scale}) rotateY(${offset * -8}deg)`,
+
+                      opacity: isActive ? 1 : distance === 1 ? 0.84 : 0,
+
+                      zIndex: 20 - distance,
+
+                      pointerEvents: isVisible ? "auto" : "none",
+
+                      visibility: isVisible ? "visible" : "hidden",
+                    }}
+                  >
+                    {/* Project Screenshot */}
+                    <div className="h-40 shrink-0 overflow-hidden bg-surface-2">
+                      <CardImage project={project} />
+                    </div>
+
+                    {/* Project Information */}
+                    <div className="flex min-h-0 flex-1 flex-col p-5">
+                      <h3 className="text-[1.25rem] font-semibold">
+                        {project.title}
+                      </h3>
+
+                      {project.type && (
+                        <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.16em] text-subtle">
+                          {project.type}
+                        </p>
+                      )}
+
+                      <p className="mt-3 line-clamp-3 text-[1rem] leading-relaxed text-muted">
+                        {project.description}
+                      </p>
+
+                      {/* Technology Stack */}
+                      {project.tech?.length > 0 && (
+                        <ul className="mt-auto flex flex-wrap gap-1.5 pt-4">
+                          {project.tech.map((tech) => (
+                            <li key={tech}>
+                              <span
+                                className="badge chip"
+                                style={{
+                                  "--chip": getTechColor(tech),
+                                }}
+                              >
+                                <span
+                                  aria-hidden="true"
+                                  className="size-1.5 shrink-0 rounded-full"
+                                  style={{
+                                    backgroundColor: getTechColor(tech),
+                                  }}
+                                />
+
+                                {tech}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            {/* Carousel Controls */}
+            <div className="mt-8 flex items-center justify-center gap-5">
+              {/* Previous Button */}
+              <button
+                type="button"
+                onClick={() => move(-1)}
+                disabled={total < 2}
+                aria-label="Previous project"
+                className="btn btn-secondary size-11 shrink-0 rounded-full p-0 disabled:opacity-40"
+              >
+                <ArrowRightIcon className="size-5 rotate-180" />
+              </button>
+
+              {/* Navigation Dots */}
+              <ul
+                className="flex items-center gap-2"
+                role="tablist"
+                aria-label="Choose a project"
+              >
+                {items.map((project, index) => {
+                  const isActive = index === current;
+
+                  return (
+                    <li key={project.title}>
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={isActive}
+                        aria-label={`Show ${project.title}`}
+                        onClick={() => setCurrent(index)}
+                        className={[
+                          "block rounded-full transition-all duration-300",
+
+                          isActive
+                            ? "h-2.5 w-6 bg-purple shadow-glow-purple"
+                            : "size-2.5 bg-border-strong hover:bg-muted",
+                        ].join(" ")}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+
+              {/* Next Button */}
+              <button
+                type="button"
+                onClick={() => move(1)}
+                disabled={total < 2}
+                aria-label="Next project"
+                className="btn btn-secondary size-11 shrink-0 rounded-full p-0 disabled:opacity-40"
+              >
+                <ArrowRightIcon className="size-5" />
+              </button>
+            </div>
+          </div>
+        </Reveal>
+      </Container>
+
+      {/* Project Details Modal */}
+      {active && (
+        <div
+          className="fixed inset-0 z-[60] grid place-items-center p-5"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="project-modal-title"
+        >
+          {/* Modal Background */}
+          <button
+            type="button"
+            aria-label="Close project details"
+            onClick={() => setActive(null)}
+            className="absolute inset-0 size-full cursor-default bg-background/70 backdrop-blur-sm"
+          />
+
+          {/* Modal Content */}
+          <div className="card relative z-10 max-h-[85vh] w-full max-w-xl overflow-auto p-7">
+            {/* Close Button */}
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={() => setActive(null)}
+              aria-label="Close project details"
+              className="icon-btn absolute right-4 top-4"
+            >
+              <CloseIcon className="size-4" />
+            </button>
+
+            {/* Project Image */}
+            <div className="h-44 overflow-hidden rounded-xl border border-border bg-surface-2">
+              <CardImage project={active} />
+            </div>
+
+            {/* Project Details */}
+            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.18em] text-purple-light">
+              Project details
+            </p>
+
+            <h2
+              id="project-modal-title"
+              className="mt-2 text-[1.75rem] font-bold"
+            >
+              {active.title}
+            </h2>
+
+            <p className="mt-3 text-[1rem] leading-relaxed text-muted">
+              {active.description}
+            </p>
+
+            {/* Technologies */}
+            {active.tech?.length > 0 && (
+              <ul className="mt-5 flex flex-wrap gap-2">
+                {active.tech.map((tech) => (
                   <li key={tech}>
                     <span
                       className="badge chip"
-                      style={{ "--chip": getTechColor(tech) }}
+                      style={{
+                        "--chip": getTechColor(tech),
+                      }}
                     >
                       <span
                         aria-hidden="true"
                         className="size-2 shrink-0 rounded-full"
-                        style={{ backgroundColor: getTechColor(tech) }}
+                        style={{
+                          backgroundColor: getTechColor(tech),
+                        }}
                       />
+
                       {tech}
                     </span>
                   </li>
                 ))}
               </ul>
-            </div>
-          ) : null}
+            )}
 
-          {project.architecture ? (
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-                Architecture
-              </span>
-              <span className="text-[1rem] font-medium text-foreground">
-                {project.architecture}
-              </span>
-            </div>
-          ) : null}
-        </div>
+            {/* Architecture */}
+            {active.architecture && (
+              <p className="mt-4 text-[1rem] text-foreground">
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
+                  Architecture ·{" "}
+                </span>
 
-        {/* Links — only shown once a real URL is provided */}
-        {hasRepo || hasDemo ? (
-          <div className="mt-auto flex flex-wrap items-center gap-2.5 border-t border-border/70 pt-6">
-            {hasRepo ? (
-              <a
-                href={project.repo}
-                target="_blank"
-                rel="noreferrer"
-                className="btn btn-secondary btn-sm"
-              >
-                <GithubIcon className="size-4" />
-                Code
-              </a>
-            ) : null}
+                {active.architecture}
+              </p>
+            )}
 
-            {hasDemo ? (
-              <a
-                href={project.demo}
-                target="_blank"
-                rel="noreferrer"
-                className="btn btn-primary btn-sm"
-              >
-                Live Demo
-                <ExternalLinkIcon className="size-4" />
-              </a>
-            ) : null}
+            {/* Project Links */}
+            {(isHttpUrl(active.repo) || isHttpUrl(active.demo)) && (
+              <div className="mt-6 flex flex-wrap items-center gap-2.5 border-t border-border/70 pt-5">
+                {isHttpUrl(active.repo) && (
+                  <a
+                    href={active.repo}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-secondary btn-sm"
+                  >
+                    <GithubIcon className="size-4" />
+                    Code
+                  </a>
+                )}
+
+                {isHttpUrl(active.demo) && (
+                  <a
+                    href={active.demo}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-primary btn-sm"
+                  >
+                    Live Demo
+                    <ExternalLinkIcon className="size-4" />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
-        ) : null}
-      </div>
-    </Card>
-  );
-}
-
-export default function Projects() {
-  return (
-    <Section
-      id="projects"
-      aria-labelledby="projects-heading"
-      className="border-t border-border"
-    >
-      <div
-        aria-hidden="true"
-        className="absolute left-0 top-1/4 size-72 rounded-full bg-purple/10 blur-[120px]"
-      />
-
-      <Container className="relative">
-        <Reveal className="max-w-2xl">
-          <p className="eyebrow">05 — Projects</p>
-          <h2
-            id="projects-heading"
-            className="section-heading mt-6"
-          >
-            Featured Projects
-          </h2>
-          <p className="mt-4 text-[1.0625rem] leading-relaxed text-muted lg:text-[1.125rem]">
-            Projects I&apos;m building while learning. The list includes web
-            applications built with PHP and Laravel and organised using
-            Domain-Driven Design (DDD) — a way of structuring the code around
-            the project&apos;s business domain and its core concepts — as well
-            as modern Next.js and React applications such as a banking
-            platform.
-          </p>
-        </Reveal>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {projects.map((project, index) => (
-            <Reveal key={project.title} delay={index * 90}>
-              <ProjectCard project={project} index={index} />
-            </Reveal>
-          ))}
         </div>
-
-        <Reveal delay={80}>
-          <div className="mt-8 flex justify-center sm:justify-end">
-            <Button
-              as="a"
-              href={profile.github}
-              target="_blank"
-              rel="noreferrer"
-              variant="secondary"
-              size="sm"
-              className="group"
-            >
-              <GithubIcon className="size-4" />
-              More on GitHub
-            </Button>
-          </div>
-        </Reveal>
-      </Container>
+      )}
     </Section>
   );
 }

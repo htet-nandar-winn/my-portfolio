@@ -1,19 +1,10 @@
-
 import { useState } from "react";
 
 import { education } from "../data/portfolio";
-import Badge from "./Badge";
-import Card from "./Card";
 import Container from "./Container";
-import IconTile from "./IconTile";
 import Reveal from "./Reveal";
 import Section from "./Section";
-import {
-  BookOpenIcon,
-  GraduationCapIcon,
-  MapPinIcon,
-  SparklesIcon,
-} from "./Icons";
+import { GraduationCapIcon } from "./Icons";
 
 /* Convert public image paths to GitHub Pages-compatible paths */
 function getImagePath(path) {
@@ -21,175 +12,114 @@ function getImagePath(path) {
   return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
 }
 
-/* Campus image placeholder */
-function CampusPlaceholder() {
-  return (
-    <div className="relative grid size-full place-items-center bg-grid">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-br from-purple/20 via-transparent to-blue/20"
-      />
-      <span className="relative grid size-14 place-items-center rounded-2xl border border-border-strong bg-surface-2/70 text-purple-light backdrop-blur">
-        <GraduationCapIcon className="size-7" />
-      </span>
-    </div>
-  );
-}
-
-/* University campus banner */
-function CampusBanner({ entry }) {
-  const [failed, setFailed] = useState(false);
-  const imagePath = getImagePath(entry.image);
-  const showImage = Boolean(imagePath) && !failed;
-
-  return (
-    <div className="relative h-40 w-full overflow-hidden border-b border-border bg-gradient-to-br from-surface-2 to-surface sm:h-52 lg:h-60">
-      {showImage ? (
-        <img
-          src={imagePath}
-          alt={entry.imageAlt || `Campus of ${entry.institution}`}
-          className="size-full object-cover object-center"
-          loading="lazy"
-          onError={() => setFailed(true)}
-        />
-      ) : (
-        <CampusPlaceholder />
-      )}
-
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background/70 to-transparent"
-      />
-    </div>
-  );
-}
-
-/* Education timeline entry */
-function EducationEntry({ entry, isLast, delay }) {
+/* Education Card */
+function EducationCard({ entry, delay }) {
+  const [imageFailed, setImageFailed] = useState(false);
   const [logoFailed, setLogoFailed] = useState(false);
+
+  const imagePath = getImagePath(entry.image);
   const logoPath = getImagePath(entry.logo);
 
   return (
-    <Reveal className="grid grid-cols-[auto_1fr] gap-5 sm:gap-6" delay={delay}>
-      <div className="flex flex-col items-center">
-        <IconTile tone="purple">
-          <GraduationCapIcon className="size-5" />
-        </IconTile>
-
-        {!isLast && (
-          <span
-            aria-hidden="true"
-            className="mt-2 w-px flex-1 bg-gradient-to-b from-purple/40 to-transparent"
-          />
-        )}
-      </div>
-
-      <div className={["min-w-0", isLast ? "" : "pb-10"].filter(Boolean).join(" ")}>
-        <Card hover className="overflow-hidden p-0">
-          {/* University Campus Image */}
-          <CampusBanner entry={entry} />
-
-          <div className="p-7 lg:p-8">
-            {/* Degree and Period */}
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <h3 className="text-[1.375rem] font-semibold">{entry.degree}</h3>
-              {entry.period && <Badge tone="blue">{entry.period}</Badge>}
+    <Reveal delay={delay} className="w-full">
+      <article className="mx-auto w-full max-w-5xl overflow-hidden rounded-xl bg-white text-center shadow-xl ring-1 ring-slate-200">
+        {/* Campus Image */}
+        {/* Campus Image Header */}
+        <div className="relative h-56 w-full overflow-hidden sm:h-72 lg:h-80">
+          {imagePath && !imageFailed ? (
+            <img
+              src={imagePath}
+              alt={entry.imageAlt || `Campus of ${entry.institution}`}
+              className="h-full w-full object-cover object-center"
+              loading="lazy"
+              onError={() => setImageFailed(true)}
+            />
+          ) : (
+            <div className="grid h-full w-full place-items-center bg-slate-200">
+              <GraduationCapIcon className="size-16 text-slate-500" />
             </div>
+          )}
 
-            {/* University Information */}
-            <ul className="mt-4 space-y-2.5 text-[1rem] text-muted">
-              <li className="flex items-center gap-3">
-                {logoPath && !logoFailed ? (
-                  <img
-                    src={logoPath}
-                    alt={`${entry.institution} logo`}
-                    className="size-12 shrink-0 rounded-xl border border-border bg-white p-1 object-contain"
-                    loading="lazy"
-                    onError={() => setLogoFailed(true)}
-                  />
-                ) : (
-                  <BookOpenIcon
-                    className="size-4 shrink-0 text-purple-light"
-                    aria-hidden="true"
-                  />
-                )}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+        </div>
 
-                <span className="font-medium leading-relaxed text-foreground">
-                  {entry.institution}
-                </span>
-              </li>
-
-              {entry.location && (
-                <li className="flex items-center gap-2.5">
-                  <MapPinIcon className="size-4 shrink-0 text-blue" aria-hidden="true" />
-                  {entry.location}
-                </li>
-              )}
-
-              {entry.graduation && (
-                <li className="flex items-center gap-2.5">
-                  <GraduationCapIcon
-                    className="size-4 shrink-0 text-purple-light"
-                    aria-hidden="true"
-                  />
-                  <span>
-                    Graduation:{" "}
-                    <span className="font-medium text-foreground">
-                      {entry.graduation}
-                    </span>
-                  </span>
-                </li>
-              )}
-            </ul>
-
-            {/* Description */}
-            {entry.description && (
-              <p className="mt-4 text-[1rem] leading-relaxed text-muted">
-                {entry.description}
-              </p>
-            )}
-
-            {/* Coursework */}
-            {entry.coursework?.length > 0 && (
-              <div className="mt-6">
-                <p className="font-mono text-xs uppercase tracking-[0.18em] text-subtle">
-                  Relevant coursework
-                </p>
-                <ul className="mt-3 flex flex-wrap gap-2">
-                  {entry.coursework.map((course) => (
-                    <li key={course}>
-                      <Badge>{course}</Badge>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Certifications */}
-            {entry.certifications?.length > 0 && (
-              <div className="mt-6">
-                <p className="font-mono text-xs uppercase tracking-[0.18em] text-subtle">
-                  Certifications
-                </p>
-                <ul className="mt-3 space-y-2">
-                  {entry.certifications.map((certification) => (
-                    <li
-                      key={certification}
-                      className="flex items-start gap-2.5 text-[1rem] text-muted"
-                    >
-                      <SparklesIcon
-                        className="mt-0.5 size-4 shrink-0 text-blue"
-                        aria-hidden="true"
-                      />
-                      {certification}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        {/* University Logo */}
+        <div className="relative z-10 -mt-14 flex justify-center">
+          <div className="flex size-28 items-center justify-center rounded-full border-4 border-blue-500 bg-white p-2 shadow-lg sm:size-32">
+            {logoPath && !logoFailed ? (
+              <img
+                src={logoPath}
+                alt={`${entry.institution} logo`}
+                className="h-full w-full rounded-full object-contain"
+                loading="lazy"
+                onError={() => setLogoFailed(true)}
+              />
+            ) : (
+              <GraduationCapIcon className="size-12 text-blue-600" />
             )}
           </div>
-        </Card>
-      </div>
+        </div>
+
+        {/* Education Details */}
+        <div className="px-5 pb-9 pt-7 sm:px-10 sm:pb-12">
+          <h3 className="text-2xl font-bold leading-tight text-slate-800 sm:text-3xl">
+            {entry.degree}
+          </h3>
+
+          <p className="mt-2 text-base text-slate-600 sm:text-lg">
+            {entry.institution}
+          </p>
+
+          {entry.period && (
+            <p className="mt-2 text-lg font-bold text-green-600">
+              period: "2019 – 2026", graduation: "Completed",
+            </p>
+          )}
+
+          {entry.location && (
+            <p className="mt-2 text-sm text-slate-500">{entry.location}</p>
+          )}
+
+          {entry.description && (
+            <p className="mt-5 text-base leading-relaxed text-slate-500">
+              {entry.description}
+            </p>
+          )}
+
+          {/* Relevant Coursework */}
+          {entry.coursework?.length > 0 && (
+            <div className="mt-7">
+              <h4 className="mb-3 font-semibold text-slate-800">
+                Relevant Coursework
+              </h4>
+              <div className="flex flex-wrap justify-center gap-2">
+                {entry.coursework.map((course) => (
+                  <span
+                    key={course}
+                    className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-600"
+                  >
+                    {course}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Certifications */}
+          {entry.certifications?.length > 0 && (
+            <div className="mt-7">
+              <h4 className="mb-3 font-semibold text-slate-800">
+                Certifications
+              </h4>
+              <ul className="space-y-2 text-slate-600">
+                {entry.certifications.map((certification) => (
+                  <li key={certification}>{certification}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </article>
     </Reveal>
   );
 }
@@ -202,39 +132,40 @@ export default function Education() {
       aria-labelledby="education-heading"
       className="border-t border-border"
     >
-      <div
-        aria-hidden="true"
-        className="absolute right-0 top-1/4 size-72 rounded-full bg-blue/10 blur-[120px]"
-      />
-
       <Container className="relative">
-        <Reveal className="max-w-2xl">
-          <p className="eyebrow">03 — Education</p>
-          <h2 id="education-heading" className="section-heading mt-6">
-            Education
+        {/* Heading */}
+        <Reveal className="mx-auto max-w-3xl text-center">
+          <h2
+            id="education-heading"
+            className="flex flex-wrap items-center justify-center gap-3 text-3xl font-bold sm:text-4xl"
+          >
+            <GraduationCapIcon className="size-10 text-orange-500" />
+
+            <span className="text-purple-800">MY</span>
+            <span className="-ml-3 text-orange-500">Education</span>
           </h2>
-          <p className="mt-4 text-[1.0625rem] leading-relaxed text-muted lg:text-[1.125rem]">
-            {education.intro}
+
+          <p className="mt-8 text-base leading-relaxed text-slate-500 sm:text-lg">
+            {education.intro ||
+              "Education is not the learning of facts, but the training of the mind to think."}
           </p>
         </Reveal>
 
-        <div className="mt-12">
+        {/* Education Cards */}
+        <div className="mt-14 space-y-12">
           {education.entries.map((entry, index) => (
-            <EducationEntry
+            <EducationCard
               key={`${entry.degree}-${index}`}
               entry={entry}
-              isLast={index === education.entries.length - 1}
-              delay={index * 90}
+              delay={index * 100}
             />
           ))}
         </div>
 
         {education.footnote && (
-          <Reveal delay={80}>
-            <p className="mt-8 font-mono text-xs leading-relaxed text-subtle">
-              {education.footnote}
-            </p>
-          </Reveal>
+          <p className="mt-8 text-center text-sm text-slate-500">
+            {education.footnote}
+          </p>
         )}
       </Container>
     </Section>

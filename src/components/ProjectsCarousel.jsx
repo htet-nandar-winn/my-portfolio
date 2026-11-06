@@ -27,14 +27,32 @@ function getInitials(title) {
     .toUpperCase();
 }
 
+function getImagePath(path) {
+  if (!path || typeof path !== "string") return "";
+
+  // Keep external image URLs unchanged
+  if (/^https?:\/\//i.test(path)) return path;
+
+  // Support GitHub Pages deployment paths
+  const base = import.meta.env.BASE_URL || "/";
+  const cleanPath = path.replace(/^\/+/, "").replace(/^public\//, "");
+
+  return `${base}${cleanPath}`;
+}
+
 function CardImage({ project }) {
-  if (project.image) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  const imageSrc = getImagePath(project.image);
+
+  if (imageSrc && !imageFailed) {
     return (
       <img
-        src={project.image}
+        src={imageSrc}
         alt={`${project.title} screenshot`}
         loading="lazy"
         draggable="false"
+        onError={() => setImageFailed(true)}
         className="size-full object-cover"
       />
     );
@@ -131,8 +149,8 @@ export default function ProjectsCarousel() {
 
   /* Coverflow geometry — the active card sits centre-stage and its
      neighbours fan out behind it, scaled down and rotated on the Y axis. */
-  const spacing = compact ? 148 : 300;
-  const visibleRange = compact ? 1 : 2;
+  const spacing = compact ? 145 : 250;
+const visibleRange = 1;
 
   return (
     <Section id="made" aria-labelledby="made-heading">
@@ -144,10 +162,7 @@ export default function ProjectsCarousel() {
       <Container className="relative">
         <Reveal className="mx-auto max-w-2xl text-center">
           <p className="eyebrow justify-center">05 — Projects Made</p>
-          <h2
-            id="made-heading"
-            className="section-heading mt-6"
-          >
+          <h2 id="made-heading" className="section-heading mt-6">
             Projects <span className="text-gradient">Made</span>
           </h2>
           <p className="mt-4 text-[1.0625rem] leading-relaxed text-muted lg:text-[1.125rem]">
@@ -233,7 +248,9 @@ export default function ProjectsCarousel() {
                     </div>
 
                     <div className="flex min-h-0 flex-1 flex-col p-5">
-                      <h3 className="text-[1.25rem] font-semibold">{project.title}</h3>
+                      <h3 className="text-[1.25rem] font-semibold">
+                        {project.title}
+                      </h3>
                       {project.type ? (
                         <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.16em] text-subtle">
                           {project.type}
@@ -255,7 +272,9 @@ export default function ProjectsCarousel() {
                                 <span
                                   aria-hidden="true"
                                   className="size-1.5 shrink-0 rounded-full"
-                                  style={{ backgroundColor: getTechColor(tech) }}
+                                  style={{
+                                    backgroundColor: getTechColor(tech),
+                                  }}
                                 />
                                 {tech}
                               </span>
@@ -281,7 +300,11 @@ export default function ProjectsCarousel() {
                 <ArrowRightIcon className="size-5 rotate-180" />
               </button>
 
-              <ul className="flex items-center gap-2" role="tablist" aria-label="Choose a project">
+              <ul
+                className="flex items-center gap-2"
+                role="tablist"
+                aria-label="Choose a project"
+              >
                 {items.map((project, index) => {
                   const isActive = index === current;
                   return (
@@ -351,7 +374,10 @@ export default function ProjectsCarousel() {
             <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.18em] text-purple-light">
               Project details
             </p>
-            <h2 id="project-modal-title" className="mt-2 text-[1.75rem] font-bold">
+            <h2
+              id="project-modal-title"
+              className="mt-2 text-[1.75rem] font-bold"
+            >
               {active.title}
             </h2>
             <p className="mt-3 text-[1rem] leading-relaxed text-muted">
