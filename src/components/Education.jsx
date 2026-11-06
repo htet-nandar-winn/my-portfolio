@@ -14,8 +14,7 @@ import {
   SparklesIcon,
 } from "./Icons";
 
-/* Neutral banner shown when no campus photo is available yet.
-   Drop a real photo at public/images/university.jpg to use it instead. */
+/* Campus image placeholder */
 function CampusPlaceholder() {
   return (
     <div className="relative grid size-full place-items-center bg-grid">
@@ -23,6 +22,7 @@ function CampusPlaceholder() {
         aria-hidden="true"
         className="absolute inset-0 bg-gradient-to-br from-purple/20 via-transparent to-blue/20"
       />
+
       <span className="relative grid size-14 place-items-center rounded-2xl border border-border-strong bg-surface-2/70 text-purple-light backdrop-blur">
         <GraduationCapIcon className="size-7" />
       </span>
@@ -30,10 +30,10 @@ function CampusPlaceholder() {
   );
 }
 
-/* Wide campus banner across the top of the education card.
-   Uses `entry.image` when it loads; otherwise the neutral placeholder. */
+/* University campus banner */
 function CampusBanner({ entry }) {
   const [failed, setFailed] = useState(false);
+
   const showImage = Boolean(entry.image) && !failed;
 
   return (
@@ -42,7 +42,7 @@ function CampusBanner({ entry }) {
         <img
           src={entry.image}
           alt={entry.imageAlt || `Campus of ${entry.institution}`}
-          className="size-full object-cover"
+          className="size-full object-cover object-center"
           loading="lazy"
           onError={() => setFailed(true)}
         />
@@ -58,7 +58,7 @@ function CampusBanner({ entry }) {
   );
 }
 
-/* One timeline row: marker column (icon + connector) and a card. */
+/* Education timeline entry */
 function EducationEntry({ entry, isLast, delay }) {
   return (
     <Reveal className="grid grid-cols-[auto_1fr] gap-5 sm:gap-6" delay={delay}>
@@ -66,31 +66,40 @@ function EducationEntry({ entry, isLast, delay }) {
         <IconTile tone="purple">
           <GraduationCapIcon className="size-5" />
         </IconTile>
-        {!isLast ? (
+
+        {!isLast && (
           <span
             aria-hidden="true"
             className="mt-2 w-px flex-1 bg-gradient-to-b from-purple/40 to-transparent"
           />
-        ) : null}
+        )}
       </div>
 
-      <div className={["min-w-0", isLast ? "" : "pb-10"].filter(Boolean).join(" ")}>
+      <div
+        className={["min-w-0", isLast ? "" : "pb-10"].filter(Boolean).join(" ")}
+      >
         <Card hover className="overflow-hidden p-0">
+          {/* University Campus Image */}
           <CampusBanner entry={entry} />
 
           <div className="p-7 lg:p-8">
+            {/* Degree and Period */}
             <div className="flex flex-wrap items-start justify-between gap-3">
               <h3 className="text-[1.375rem] font-semibold">{entry.degree}</h3>
-              {entry.period ? <Badge tone="blue">{entry.period}</Badge> : null}
+
+              {entry.period && <Badge tone="blue">{entry.period}</Badge>}
             </div>
 
+            {/* University Information */}
             <ul className="mt-4 space-y-2.5 text-[1rem] text-muted">
-              <li className="flex items-start gap-3">
+              {/* University Logo */}
+              <li className="flex items-center gap-3">
                 {entry.logo ? (
                   <img
                     src={entry.logo}
                     alt={`${entry.institution} logo`}
-                    className="size-9 rounded-xl border border-border object-cover bg-surface-2 shrink-0"
+                    className="size-12 rounded-xl border border-border object-contain bg-white p-1 shrink-0"
+                    loading="lazy"
                   />
                 ) : (
                   <BookOpenIcon
@@ -98,25 +107,32 @@ function EducationEntry({ entry, isLast, delay }) {
                     aria-hidden="true"
                   />
                 )}
+
                 <span className="font-medium text-foreground leading-relaxed">
                   {entry.institution}
                 </span>
               </li>
-              {entry.location ? (
+
+              {/* Location */}
+              {entry.location && (
                 <li className="flex items-center gap-2.5">
                   <MapPinIcon
                     className="size-4 shrink-0 text-blue"
                     aria-hidden="true"
                   />
+
                   {entry.location}
                 </li>
-              ) : null}
-              {entry.graduation ? (
+              )}
+
+              {/* Graduation */}
+              {entry.graduation && (
                 <li className="flex items-center gap-2.5">
                   <GraduationCapIcon
                     className="size-4 shrink-0 text-purple-light"
                     aria-hidden="true"
                   />
+
                   <span>
                     Graduation:{" "}
                     <span className="font-medium text-foreground">
@@ -124,20 +140,23 @@ function EducationEntry({ entry, isLast, delay }) {
                     </span>
                   </span>
                 </li>
-              ) : null}
+              )}
             </ul>
 
-            {entry.description ? (
+            {/* Description */}
+            {entry.description && (
               <p className="mt-4 text-[1rem] leading-relaxed text-muted">
                 {entry.description}
               </p>
-            ) : null}
+            )}
 
-            {entry.coursework?.length ? (
+            {/* Coursework */}
+            {entry.coursework?.length > 0 && (
               <div className="mt-6">
                 <p className="font-mono text-xs uppercase tracking-[0.18em] text-subtle">
                   Relevant coursework
                 </p>
+
                 <ul className="mt-3 flex flex-wrap gap-2">
                   {entry.coursework.map((course) => (
                     <li key={course}>
@@ -146,13 +165,15 @@ function EducationEntry({ entry, isLast, delay }) {
                   ))}
                 </ul>
               </div>
-            ) : null}
+            )}
 
-            {entry.certifications?.length ? (
+            {/* Certifications */}
+            {entry.certifications?.length > 0 && (
               <div className="mt-6">
                 <p className="font-mono text-xs uppercase tracking-[0.18em] text-subtle">
                   Certifications
                 </p>
+
                 <ul className="mt-3 space-y-2">
                   {entry.certifications.map((certification) => (
                     <li
@@ -163,12 +184,13 @@ function EducationEntry({ entry, isLast, delay }) {
                         className="mt-0.5 size-4 shrink-0 text-blue"
                         aria-hidden="true"
                       />
+
                       {certification}
                     </li>
                   ))}
                 </ul>
               </div>
-            ) : null}
+            )}
           </div>
         </Card>
       </div>
@@ -176,6 +198,7 @@ function EducationEntry({ entry, isLast, delay }) {
   );
 }
 
+/* Education Section */
 export default function Education() {
   return (
     <Section
@@ -189,19 +212,20 @@ export default function Education() {
       />
 
       <Container className="relative">
+        {/* Section Heading */}
         <Reveal className="max-w-2xl">
           <p className="eyebrow">03 — Education</p>
-          <h2
-            id="education-heading"
-            className="section-heading mt-6"
-          >
+
+          <h2 id="education-heading" className="section-heading mt-6">
             Education
           </h2>
+
           <p className="mt-4 text-[1.0625rem] leading-relaxed text-muted lg:text-[1.125rem]">
             {education.intro}
           </p>
         </Reveal>
 
+        {/* Education Timeline */}
         <div className="mt-12">
           {education.entries.map((entry, index) => (
             <EducationEntry
@@ -213,13 +237,14 @@ export default function Education() {
           ))}
         </div>
 
-        {education.footnote ? (
+        {/* Footnote */}
+        {education.footnote && (
           <Reveal delay={80}>
             <p className="mt-8 font-mono text-xs leading-relaxed text-subtle">
               {education.footnote}
             </p>
           </Reveal>
-        ) : null}
+        )}
       </Container>
     </Section>
   );
