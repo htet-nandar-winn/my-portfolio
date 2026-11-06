@@ -32,6 +32,9 @@ export const TECH_COLORS = {
   bootstrap: "#7952b3",
   typescript: "#3178c6",
   python: "#3776ab",
+  nextjs: "#000000",
+  nestjs: "#E0234E",
+  postgresql: "#4169E1",
 };
 
 /** Returns a brand colour for a technology name, or a neutral accent. */

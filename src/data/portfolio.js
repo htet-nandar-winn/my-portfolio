@@ -200,6 +200,9 @@ export const skills = {
     { name: "Postman", icon: "postman" },
     { name: "Figma", icon: "figma" },
     { name: "Git", icon: "git" },
+    { name: "Next.js", icon: "nextjs" },
+    { name: "NestJS", icon: "nestjs" },
+    { name: "PostgreSQL", icon: "postgresql" },
   ],
 };
 
