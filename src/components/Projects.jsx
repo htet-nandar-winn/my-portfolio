@@ -220,11 +220,6 @@ export default function ProjectsCarousel() {
           <h2 id="made-heading" className="section-heading mt-6">
             Projects <span className="text-gradient">Made</span>
           </h2>
-
-          <p className="mt-4 text-[1.0625rem] leading-relaxed text-muted lg:text-[1.125rem]">
-            A closer look at the projects I have built. Use the arrows to browse
-            and select a card to see the full details.
-          </p>
         </Reveal>
 
         {/* Carousel */}

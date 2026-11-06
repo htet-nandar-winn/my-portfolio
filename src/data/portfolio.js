@@ -180,8 +180,7 @@ export const skills = {
   /** The single section heading, centred above the grid. */
   heading: "Skills & Abilities",
 
-  intro:
-    "The technologies I am learning and using in my studies and personal projects. This is a learning record rather than a rating — I am always growing in each of these.",
+  intro: "",
 
   /** Shown under the grid. */
   footnote: "",
@@ -259,7 +258,7 @@ export const experience = {
 
   heading: "My Experience",
 
-  intro: "Where I am putting my skills to work.",
+  intro: "",
 
   entries: [
     {

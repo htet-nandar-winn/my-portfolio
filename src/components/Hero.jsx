@@ -198,7 +198,7 @@ export default function Hero() {
         className="absolute -top-24 right-0 size-96 rounded-full bg-blue/15 blur-[130px] animate-pulse-glow"
       />
 
-      <Container className="relative py-20 sm:py-24 lg:py-24">
+      <Container className="relative py-12 sm:py-14 lg:py-18">
         <div className="grid items-center gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14 xl:gap-20">
           {/* ---------------- Left: copy ---------------- */}
           <div className="min-w-0 max-w-3xl">

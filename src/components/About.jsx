@@ -91,7 +91,7 @@ export default function About() {
           </div>
 
           {/* ---------------- Quick facts ---------------- */}
-          <Reveal delay={160} className="w-full lg:mt-28 lg:max-w-md">
+          <Reveal delay={160} className="w-full lg:max-w-md">
             <Card shade className="p-6 lg:p-7">
               <p className="font-mono text-[0.875rem] uppercase tracking-[0.18em] text-subtle">
                 Quick facts

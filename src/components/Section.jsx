@@ -7,7 +7,7 @@ export default function Section({
   return (
     <section
       id={id}
-      className={["relative py-20 sm:py-24 lg:py-28 xl:py-32", className]
+      className={["relative py-12 sm:py-14 lg:py-18 xl:py-22", className]
         .filter(Boolean)
         .join(" ")}
       {...rest}
