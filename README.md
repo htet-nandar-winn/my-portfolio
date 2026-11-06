@@ -24,7 +24,6 @@ I'm learning web development and building projects using React, PHP, Laravel, an
 - **BloodConnect:** Blood donation management system.
 - **MediaLibrary:** Media library management project.
 - **Banking:** Horizon — a modern banking platform for everyone.
-- **Vite-Project:** Modern web application built with React and Vite.
 - **Campus Food Ordering System:** Web-based campus food ordering and canteen management system.
 
 ## 📫 Contact

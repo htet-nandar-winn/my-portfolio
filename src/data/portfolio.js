@@ -373,18 +373,6 @@ export const projects = [
     isExample: false,
   },
   {
-    title: "Vite-Project",
-    type: "Web application",
-    description:
-      "A Laravel-based web application using Vite for frontend asset development and management.",
-    tech: ["PHP", "Laravel", "Vite", "JavaScript"],
-    architecture: "",
-    image: "",
-    repo: "https://github.com/htet-nandar-winn/Vite-Project",
-    demo: "",
-    isExample: false,
-  },
-  {
     title: "Campus Food Ordering System",
     type: "Web application",
     description:
